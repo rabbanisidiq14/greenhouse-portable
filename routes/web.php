@@ -9,14 +9,9 @@ use App\Http\Controllers\SensorController;
 use App\Http\Controllers\ActuatorController;
 use App\Http\Controllers\MqttTopicController;
 use App\Http\Controllers\ControlParameterController;
+use App\Http\Controllers\ClientController;
 use Illuminate\Support\Facades\Route;
 
-// Authentication Routes
-Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
-Route::post('login', [AuthController::class, 'login']);
-Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-Route::get('register', [AuthController::class, 'showRegistrationForm']);
-Route::post('register', [AuthController::class, 'register']);
 
 // Authenticated Routes
 Route::middleware('auth')->group(function () {
@@ -33,6 +28,14 @@ Route::middleware('auth')->group(function () {
     // Automatic Control
     Route::get('/automatic-control', [AutomaticControlController::class, 'index'])->name('automatic-control');
 
+    // List MQTT Client
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients');
+    Route::get('/clients/create', [ClientController::class, 'create'])->name('clients.create');
+    Route::post('/clients', [ClientController::class, 'store'])->name('clients.store');
+    Route::get('/clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
+    Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
+    Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+
     // List Sensors
     Route::get('/sensors', [SensorController::class, 'index'])->name('sensors');
 
@@ -44,6 +47,11 @@ Route::middleware('auth')->group(function () {
 
     // List Control Parameters
     Route::get('/control-parameters', [ControlParameterController::class, 'index'])->name('control-parameters');
+    
+    // Settings
+    Route::get('/settings', function () {
+        return view('settings');
+    })->name('settings');
 });
 
 require __DIR__.'/auth.php';
