@@ -44,6 +44,11 @@ Route::middleware('auth')->group(function () {
 
     // List MQTT Topics
     Route::get('/topics', [MqttTopicController::class, 'index'])->name('topics');
+    Route::get('/topics/create', [MqttTopicController::class, 'create'])->name('topics.create');
+    Route::post('/topics', [MqttTopicController::class, 'store'])->name('topics.store');
+    Route::get('/topics/{id}/edit', [MqttTopicController::class, 'edit'])->name('topics.edit');
+    Route::put('/topics/{id}', [MqttTopicController::class, 'update'])->name('topics.update');
+    Route::delete('/topics/{id}', [MqttTopicController::class, 'destroy'])->name('topics.destroy');
 
     // List Control Parameters
     Route::get('/control-parameters', [ControlParameterController::class, 'index'])->name('control-parameters');
