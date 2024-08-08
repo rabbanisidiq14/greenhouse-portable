@@ -55,5 +55,21 @@ class ActuatorController extends Controller
         $actuatorData->delete();
         return response()->json(null, 204);
     }
+
+    public function latest()
+    {
+        $latestData = ActuatorData::select('actuator_data.topic_id', 'actuator_data.actuator_state', 'mqtt_topics.topic_name')
+        ->join('mqtt_topics', 'actuator_data.topic_id', '=', 'mqtt_topics.id')
+        ->whereIn('actuator_data.id', function($query) {
+            $query->selectRaw('MAX(id)')
+                ->from('actuator_data')
+                ->groupBy('topic_id');
+        })
+        ->orderBy('topic_id', 'ASC')
+        ->get();
+
+
+        return response()->json($latestData);
+    }
 }
 

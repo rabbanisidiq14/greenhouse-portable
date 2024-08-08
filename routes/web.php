@@ -1,11 +1,8 @@
 <?php
 
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManualControlController;
-use App\Http\Controllers\SensorController;
-use App\Http\Controllers\ActuatorController;
 use App\Http\Controllers\MqttTopicController;
 use App\Http\Controllers\ControlParameterController;
 use App\Http\Controllers\ClientController;
@@ -53,6 +50,4 @@ Route::middleware('auth')->group(function () {
         return view('settings');
     })->name('settings');
 });
-Route::apiResource('/api/actuator-data', ActuatorController::class);
-Route::apiResource('/api/sensor-data', SensorController::class);
 require __DIR__.'/auth.php';
