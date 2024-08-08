@@ -4,7 +4,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManualControlController;
-use App\Http\Controllers\AutomaticControlController;
 use App\Http\Controllers\SensorController;
 use App\Http\Controllers\ActuatorController;
 use App\Http\Controllers\MqttTopicController;
@@ -26,7 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/manual-control', [ManualControlController::class, 'index'])->name('manual-control');
 
     // Automatic Control
-    Route::get('/automatic-control', [AutomaticControlController::class, 'index'])->name('automatic-control');
+    Route::get('/control-parameters', [ControlParameterController::class, 'index'])->name('control-parameters');
+    Route::put('/control-parameters/{id}', [ControlParameterController::class, 'update'])->name('control-parameters.update');
+    Route::delete('/control-parameters/{id}', [ControlParameterController::class, 'destroy'])->name('control-parameters.destroy');
+    Route::get('/control-parameters/create', [ControlParameterController::class,'create'])->name('control-parameters.create');
+    Route::post('/control-parameters', [ControlParameterController::class,'store'])->name('control-parameters.store');
 
     // List MQTT Client
     Route::get('/clients', [ClientController::class, 'index'])->name('clients');
@@ -36,12 +39,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/clients/{id}', [ClientController::class, 'update'])->name('clients.update');
     Route::delete('/clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
-    // List Sensors
-    Route::get('/sensors', [SensorController::class, 'index'])->name('sensors');
-
-    // List Actuators
-    Route::get('/actuators', [ActuatorController::class, 'index'])->name('actuators');
-
     // List MQTT Topics
     Route::get('/topics', [MqttTopicController::class, 'index'])->name('topics');
     Route::get('/topics/create', [MqttTopicController::class, 'create'])->name('topics.create');
@@ -49,14 +46,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/topics/{id}/edit', [MqttTopicController::class, 'edit'])->name('topics.edit');
     Route::put('/topics/{id}', [MqttTopicController::class, 'update'])->name('topics.update');
     Route::delete('/topics/{id}', [MqttTopicController::class, 'destroy'])->name('topics.destroy');
-
-    // List Control Parameters
-    Route::get('/control-parameters', [ControlParameterController::class, 'index'])->name('control-parameters');
     
+    // control parameters
     // Settings
     Route::get('/settings', function () {
         return view('settings');
     })->name('settings');
 });
-
+Route::apiResource('/api/actuator-data', ActuatorController::class);
+Route::apiResource('/api/sensor-data', SensorController::class);
 require __DIR__.'/auth.php';

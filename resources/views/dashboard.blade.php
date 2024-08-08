@@ -11,7 +11,7 @@
             <nav class="space-y-2">
                 <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Dashboard</a>
                 <a href="{{ route('manual-control') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Manual Control</a>
-                <a href="{{ route('automatic-control') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Automatic Control</a>
+                <a href="{{ route('control-parameters') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Automatic Control</a>
                 <a href="{{ route('settings') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Settings</a>
                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Profile</a>
                 <a href="{{ route('clients') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Clients</a>
