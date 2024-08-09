@@ -12,7 +12,6 @@
                 <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Dashboard</a>
                 <a href="{{ route('manual-control') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Manual Control</a>
                 <a href="{{ route('control-parameters') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Automatic Control</a>
-                <a href="{{ route('settings') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Settings</a>
                 <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Profile</a>
                 <a href="{{ route('clients') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Clients</a>
                 <a href="{{ route('topics') }}" class="block px-4 py-2 text-white rounded hover:bg-gray-800">Topics</a>
@@ -21,82 +20,120 @@
         
         <!-- Main Content -->
         <div class="w-3/4 p-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Placeholder for 9 scatter charts -->
+            <div id="charts-container">
                 @for ($i = 1; $i <= 9; $i++)
-                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
-                        <canvas id="chart{{ $i }}"></canvas>
-                    </div>
+                    <canvas id="sensorChart{{ $i }}" width="400" height="200"></canvas>
                 @endfor
             </div>
         </div>
     </div>
 </x-app-layout>
-
-<!-- Include Chart.js CDN -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <!-- JavaScript for rendering charts -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    const chartsData = [
-        // Data for each of the 9 charts, replace with your own data
-        @for ($i = 1; $i <= 9; $i++)
-        {
-            labels: ['Point 1', 'Point 2', 'Point 3'],
-            datasets: [{
-                label: 'Chart {{ $i }}',
-                data: [
-                    { x: 10, y: 20 },
-                    { x: 15, y: 10 },
-                    { x: 20, y: 30 }
-                ],
-                backgroundColor: 'rgba(75, 192, 192, 0.6)',
-            }]
-        },
-        @endfor
-    ];
+    document.addEventListener('DOMContentLoaded', function () {
+        const updateInterval = 5000; // 5 seconds
 
-    chartsData.forEach((data, index) => {
-        const ctx = document.getElementById('chart' + (index + 1)).getContext('2d');
-        new Chart(ctx, {
-            type: 'scatter',
-            data: data,
-            options: {
-                scales: {
-                    x: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: 'rgba(255,255,255, 0.8)' // Warna teks label sumbu X
-                        },
-                        title: {
-                            color: 'rgba(255,255,255, 0.8)' // Warna teks judul sumbu X
+        function fetchDataAndUpdateCharts() {
+            fetch('/api/sensor-data')
+                .then(response => response.json())
+                .then(data => {
+                    // Group data by topic_id
+                    const groupedData = data.reduce((acc, item) => {
+                        if (!acc[item.topic_id]) {
+                            acc[item.topic_id] = {
+                                topic_name: '',
+                                data: []
+                            };
                         }
+                        acc[item.topic_id].data.push({
+                            x: new Date(item.timestamp),
+                            y: item.sensor_value
+                        });
+
+                        // Store the topic_name for labeling purposes
+                        acc[item.topic_id].topic_name = item.topic_name || `Sensor ${item.topic_id}`;
+                        return acc;
+                    }, {});
+
+                    // Update charts
+                    Object.keys(groupedData).forEach((topicId, index) => {
+                        const chartData = groupedData[topicId].data;
+                        const topicName = groupedData[topicId].topic_name;
+
+                        if (window['sensorChart' + (index + 1)]) {
+                            // Update chart label with the topic name
+                            window['sensorChart' + (index + 1)].data.datasets[0].label = topicName;
+                            window['sensorChart' + (index + 1)].data.datasets[0].data = chartData;
+                            window['sensorChart' + (index + 1)].update();
+                        }
+                    });
+                });
+        }
+
+        function initializeCharts() {
+            for (let i = 1; i <= 9; i++) {
+                const ctx = document.getElementById('sensorChart' + i).getContext('2d');
+                window['sensorChart' + i] = new Chart(ctx, {
+                    type: 'line', // Change to line chart
+                    data: {
+                        datasets: [{
+                            label: 'Sensor Data ' + i, // Placeholder, will be updated later
+                            data: [], // Empty initially, will be populated later
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            fill: false,
+                            tension: 0.1, // Smooth the lines
+                        }]
                     },
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            color: 'rgba(255,255,255, 0.8)' // Warna teks label sumbu Y
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'minute'
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Timestamp',
+                                    color: 'rgba(255,255,255, 0.8)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255,255,255, 0.8)'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Sensor Value',
+                                    color: 'rgba(255,255,255, 0.8)'
+                                },
+                                ticks: {
+                                    color: 'rgba(255,255,255, 0.8)'
+                                }
+                            }
                         },
-                        title: {
-                            color: 'rgba(255,255,255, 0.8)' // Warna teks judul sumbu Y
+                        plugins: {
+                            tooltip: {
+                                titleColor: 'rgba(255, 255, 255, 1)',
+                                bodyColor: 'rgba(255, 255, 255, 1)',
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)'
+                            },
+                            legend: {
+                                labels: {
+                                    color: 'rgba(255, 255, 255, 1)'
+                                }
+                            }
                         }
                     }
-                },
-                plugins: {
-                    tooltip: {
-                        titleColor: 'rgba(255, 255, 255, 1)', // Warna teks judul tooltip
-                        bodyColor: 'rgba(255, 255, 255, 1)', // Warna teks body tooltip
-                        backgroundColor: 'rgba(0, 0, 0, 0.8)' // Warna latar belakang tooltip
-                    },
-                    legend: {
-                        labels: {
-                            color: 'rgba(255, 255, 255, 1)' // Warna teks label legenda
-                        }
-                    }
-                }
+                });
             }
-        });
+        }
+
+        initializeCharts();
+        fetchDataAndUpdateCharts(); // Initial load
+        setInterval(fetchDataAndUpdateCharts, updateInterval); // Update every 5 seconds
     });
-});
 </script>

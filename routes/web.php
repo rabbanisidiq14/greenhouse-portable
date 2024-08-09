@@ -43,11 +43,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/topics/{id}/edit', [MqttTopicController::class, 'edit'])->name('topics.edit');
     Route::put('/topics/{id}', [MqttTopicController::class, 'update'])->name('topics.update');
     Route::delete('/topics/{id}', [MqttTopicController::class, 'destroy'])->name('topics.destroy');
-    
-    // control parameters
-    // Settings
-    Route::get('/settings', function () {
-        return view('settings');
-    })->name('settings');
 });
 require __DIR__.'/auth.php';

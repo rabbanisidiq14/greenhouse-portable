@@ -8,7 +8,10 @@ class SensorController extends Controller
 {
     public function index()
     {
-        $sensorData = SensorData::all();
+        // Mengambil 180 data sensor terbaru
+        $sensorData = SensorData::join('mqtt_topics', 'sensor_data.topic_id', 'mqtt_topics.id')
+        ->orderBy('timestamp', 'desc')->take(180)
+        ->get();
         return response()->json($sensorData);
     }
 
