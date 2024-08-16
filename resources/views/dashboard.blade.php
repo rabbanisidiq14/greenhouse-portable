@@ -21,7 +21,7 @@
         <!-- Main Content -->
         <div class="w-3/4 p-6">
             <div id="charts-container">
-                @for ($i = 1; $i <= 9; $i++)
+                @for ($i = 1; $i <= 12; $i++)
                     <canvas id="sensorChart{{ $i }}" width="400" height="200"></canvas>
                 @endfor
             </div>
@@ -73,7 +73,7 @@
         }
 
         function initializeCharts() {
-            for (let i = 1; i <= 9; i++) {
+            for (let i = 1; i <= 12; i++) {
                 const ctx = document.getElementById('sensorChart' + i).getContext('2d');
                 window['sensorChart' + i] = new Chart(ctx, {
                     type: 'line', // Change to line chart

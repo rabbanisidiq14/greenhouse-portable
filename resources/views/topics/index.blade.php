@@ -30,7 +30,7 @@
           </nav>
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900 dark:text-gray-100">
-                <div class="overflow-x-auto">
+                <div class="overflow-x-scroll">
                   <div class="flex w-full justify-end py-2">
                     <a href="{{ route('topics.create') }}" class="border border-white-100 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">Tambah</a>
                   </div>

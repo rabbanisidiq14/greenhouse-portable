@@ -7,7 +7,8 @@ use App\Http\Controllers\ActuatorController;
 
 /*
 |--------------------------------------------------------------------------
-| API Routes
+| API Routesa
+
 |--------------------------------------------------------------------------
 |
 | Here is where you can register API routes for your application. These

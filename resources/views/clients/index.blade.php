@@ -34,7 +34,8 @@
                   <div class="flex w-full justify-end py-2">
                     <a href="{{ route('clients.create') }}" class="border border-white-100 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded">Tambah</a>
                   </div>
-                  <table class="w-full bg-gray-800 border border-gray-700">
+                  <div class="w-full overflow-x-auto">
+                  <table class="w-full bg-gray-800 border border-gray-700 overflow-x-auto">
                       <thead>
                           <tr>
                               <th class="px-4 py-2 border-b border-gray-700">ID</th>
@@ -65,6 +66,7 @@
                           @endforeach
                       </tbody>
                   </table>
+                  </div>
               </div>
                 </div>
             </div>
